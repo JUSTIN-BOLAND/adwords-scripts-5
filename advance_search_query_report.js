@@ -45,7 +45,7 @@ var activeCampaignIds = [];
 // Gather ad group level negative keywords
 
 var keywordReport = AdWordsApp.report(
-"SELECT CampaignId, AdGroupId, KeywordText, KeywordMatchType " +
+"SELECT CampaignId, AdGroupId, Criteria, KeywordMatchType " +
 "FROM   KEYWORDS_PERFORMANCE_REPORT " +
 "WHERE CampaignStatus = ENABLED AND AdGroupStatus = ENABLED AND Status = ENABLED AND IsNegative = TRUE " +
 "AND CampaignName CONTAINS_IGNORE_CASE '" + campaignNameContains + "' " +
@@ -57,10 +57,10 @@ var keywordRow = keywordRows.next();
 
 if (negativesByGroup[keywordRow["AdGroupId"]] == undefined) {
 negativesByGroup[keywordRow["AdGroupId"]] = 
-[[keywordRow["KeywordText"].toLowerCase(),keywordRow["KeywordMatchType"].toLowerCase()]];
+[[keywordRow["Criteria"].toLowerCase(),keywordRow["KeywordMatchType"].toLowerCase()]];
 } else {
 
-negativesByGroup[keywordRow["AdGroupId"]].push([keywordRow["KeywordText"].toLowerCase(),keywordRow["KeywordMatchType"].toLowerCase()]);
+negativesByGroup[keywordRow["AdGroupId"]].push([keywordRow["Criteria"].toLowerCase(),keywordRow["KeywordMatchType"].toLowerCase()]);
 }
 
 if (activeCampaignIds.indexOf(keywordRow["CampaignId"]) < 0) {
@@ -71,7 +71,7 @@ activeCampaignIds.push(keywordRow["CampaignId"]);
 // Gather campaign level negative keywords
 
 var campaignNegReport = AdWordsApp.report(
-"SELECT CampaignId, KeywordText, KeywordMatchType " +
+"SELECT CampaignId, Criteria, KeywordMatchType " +
 "FROM   CAMPAIGN_NEGATIVE_KEYWORDS_PERFORMANCE_REPORT " +
 "WHERE  IsNegative = TRUE " +
 "AND CampaignId IN [" + activeCampaignIds.join(",") + "]"
@@ -81,10 +81,10 @@ while (campaignNegativeRows.hasNext()) {
 var campaignNegativeRow = campaignNegativeRows.next();
 
 if (negativesByCampaign[campaignNegativeRow["CampaignId"]] == undefined) {
-negativesByCampaign[campaignNegativeRow["CampaignId"]] = [[campaignNegativeRow["KeywordText"].toLowerCase(),campaignNegativeRow["KeywordMatchType"].toLowerCase()]];
+negativesByCampaign[campaignNegativeRow["CampaignId"]] = [[campaignNegativeRow["Criteria"].toLowerCase(),campaignNegativeRow["KeywordMatchType"].toLowerCase()]];
 } else {
 
-negativesByCampaign[campaignNegativeRow["CampaignId"]].push([campaignNegativeRow["KeywordText"].toLowerCase(),campaignNegativeRow["KeywordMatchType"].toLowerCase()]);
+negativesByCampaign[campaignNegativeRow["CampaignId"]].push([campaignNegativeRow["Criteria"].toLowerCase(),campaignNegativeRow["KeywordMatchType"].toLowerCase()]);
 }
 }//end while
 
@@ -124,7 +124,7 @@ sharedSetNames[sharedSetRow["SharedSetId"]] = sharedSetRow["Name"];
 // and record it as a campaign level negative in the campaigns that use the set
 
 var sharedSetReport = AdWordsApp.report(
-"SELECT SharedSetId, KeywordMatchType, KeywordText " +
+"SELECT SharedSetId, KeywordMatchType, Criteria " +
 "FROM   SHARED_SET_CRITERIA_REPORT ");
 var sharedSetRows = sharedSetReport.rows();
 while (sharedSetRows.hasNext()) {
@@ -135,10 +135,10 @@ for (var i=0; i<sharedSetCampaigns[setName].length; i++) {
 var campaignId = sharedSetCampaigns[setName][i];
 if (negativesByCampaign[campaignId] == undefined) {
 negativesByCampaign[campaignId] = 
-[[sharedSetRow["KeywordText"].toLowerCase(),sharedSetRow["KeywordMatchType"].toLowerCase()]];
+[[sharedSetRow["Criteria"].toLowerCase(),sharedSetRow["KeywordMatchType"].toLowerCase()]];
 } else {
 
-negativesByCampaign[campaignId].push([sharedSetRow["KeywordText"].toLowerCase(),sharedSetRow["KeywordMatchType"].toLowerCase()]);
+negativesByCampaign[campaignId].push([sharedSetRow["Criteria"].toLowerCase(),sharedSetRow["KeywordMatchType"].toLowerCase()]);
 }
 }
 }
