@@ -33,22 +33,32 @@ function main() {
     adGroupIdList.push(adGroupId);
   }
   var adGroups = AdWordsApp.adGroups().withIds(adGroupIdList).get();
+	var accountName = 'Test Account';
+	var email = 'ali@atom42.co.uk';
+	var body = 'Hi Ali,<br> Here is an example email';
   while (adGroups.hasNext()) {
     var adGroup = adGroups.next();
     if (negativeKeywords[adGroup.getId()]) {
       for (var i = 0; i < negativeKeywords[adGroup.getId()].length; i++) {
-        adGroup.createNegativeKeyword(
-            '[' + negativeKeywords[adGroup.getId()][i] + ']');
+				body = body + 'Negative Keyword: ' +negativeKeywords[adGroup.getId()][i] + "<br>";
+        //adGroup.createNegativeKeyword('[' + negativeKeywords[adGroup.getId()][i] + ']');
       }
     }
     if (positiveKeywords[adGroup.getId()]) {
       for (var i = 0; i < positiveKeywords[adGroup.getId()].length; i++) {
-        var keywordOperation = adGroup.newKeywordBuilder()
+				body = body + 'Positive Keyword: ' +positiveKeywords[adGroup.getId()][i] + "<br>";
+        /*var keywordOperation = adGroup.newKeywordBuilder()
             .withText('[' + positiveKeywords[adGroup.getId()][i] + ']')
-            .build();
+            .build();*/
       }
     }
   }
+	MailApp.sendEmail(email,"Alert: " + accountName + " – Test Script","",{htmlBody: body})
+	
+	
+	
+    
+    
 }
 function addToMultiMap(map, key, value) {
   if (!map[key]) {
